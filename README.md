@@ -1,2 +1,3 @@
 # rsg-bathing
  
+- NOTICE : WIP PLEASE DO NOT USE IN PRODUCTION
