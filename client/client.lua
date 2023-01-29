@@ -1,6 +1,12 @@
 local RSGCore = exports['rsg-core']:GetCoreObject()
-
 BathingPed = nil
+local inbath = false
+local playerCoords = nil
+local isBathingActive = false
+
+exports('IsBathingActive', function()
+    return inbath
+end)
 
 Citizen.CreateThread(function()
     CreateBlips()
@@ -357,6 +363,14 @@ UnloadAllStreamings = function()
 end
 
 UndressCharacter = function()
+    local ped = PlayerPedId()
+    local EquippedWeapons = {}
+
+    EquippedWeapons = exports['rsg-weapons']:EquippedWeapons()
+
+    for i = 1, #EquippedWeapons do
+        RemoveWeaponFromPed(ped, EquippedWeapons[i])
+    end
     TriggerEvent('rsg-wardrobe:client:removeAllClothing')
 end
 
