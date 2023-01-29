@@ -6,19 +6,14 @@ author 'RexShack#3041'
 description 'rsg-bathing'
 
 client_scripts {
-    'client/client.lua'
+	'client/client.lua',
+	'client/structs.js'
 }
 
 server_scripts {
-    'server/server.lua'
+	'server/server.lua'
 }
 
-shared_scripts {
-    '@rsg-core/shared/locale.lua',
-    'locales/en.lua', -- Change this to your preferred language
-    'config.lua',
+shared_scripts { 
+	'config.lua'
 }
-
-dependency 'rsg-core'
-
-lua54 'yes'
