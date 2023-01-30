@@ -6,20 +6,20 @@ author 'RexShack#3041'
 description 'rsg-bathing'
 
 client_scripts {
-	'client/client.lua',
-	'client/structs.js'
+    'client/client.lua',
+    'client/structs.js'
 }
 
 server_scripts {
-	'server/server.lua'
+    'server/server.lua'
 }
 
 shared_scripts { 
-	'config.lua'
+    'config.lua'
 }
 
 dependencies {
     'rsg-core',
-	'rsg-appearance',
-	'rsg-wardrobe'
+    'rsg-appearance',
+    'rsg-wardrobe'
 }
