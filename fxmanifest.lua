@@ -17,3 +17,9 @@ server_scripts {
 shared_scripts { 
 	'config.lua'
 }
+
+dependencies {
+    'rsg-core',
+	'rsg-appearance',
+	'rsg-wardrobe'
+}
