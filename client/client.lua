@@ -138,7 +138,7 @@ AddEventHandler('rsg-bathing:client:StartBath', function(town)
                                 
                                 ClearPedEnvDirt(PlayerPedId())
                                 ClearPedBloodDamage(PlayerPedId())
-                                SetPedDirtCleaned(PlayerPedId(), 0.0, -1, 1, 1)
+                                N_0xe3144b932dfdff65(PlayerPedId(), 0.0, -1, 1, 1)
                                 ClearPedDamageDecalByZone(PlayerPedId(), 10, "ALL")
                                 Citizen.InvokeNative(0x7F5D88333EE8A86F, PlayerPedId(), 1)
 
