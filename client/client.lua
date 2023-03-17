@@ -302,6 +302,7 @@ end)
 RegisterNetEvent('rsg-bathing:client:HideDeluxePrompt')
 AddEventHandler('rsg-bathing:client:HideDeluxePrompt', function()
     TogglePrompts({ "REQUEST_DELUXE_BATHING" }, false)
+    TogglePrompts({ "STOP_BATHING", "SCRUB" }, true)
 end)
 
 ExitPremiumBath = function(animscene, town, cam, disableScrub)
