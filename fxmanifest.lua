@@ -4,6 +4,7 @@ game 'rdr3'
 
 author 'RexShack#3041'
 description 'rsg-bathing'
+version '1.0.0'
 
 client_scripts {
     'client/client.lua',
