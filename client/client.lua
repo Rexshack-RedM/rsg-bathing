@@ -215,11 +215,12 @@ ExitBathing = function(animscene, town, cam)
     
     while not Citizen.InvokeNative(0xD8254CB2C586412B, animscene, true) do Citizen.Wait(10) end --// _IS_ANIM_SCENE_FINISHED
     
-	DressCharacter()
+    DressCharacter()
     UnloadAllStreamings()
     N_0x69d65e89ffd72313(false, false)
     TriggerMusicEvent("MG_BATHING_STOP")
     Citizen.InvokeNative(0x704C908E9C405136, PlayerPedId())
+    TriggerServerEvent("RSGCore:Server:SetMetaData", "cleanliness", 100)
     TriggerServerEvent("rsg-bathing:server:setBathAsFree", town)
 
     if DoesEntityExist(Citizen.InvokeNative(0xE5822422197BBBA3, animscene, "Female", false)) then
