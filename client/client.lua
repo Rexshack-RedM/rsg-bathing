@@ -377,7 +377,10 @@ UndressCharacter = function()
 end
 
 DressCharacter = function()
+    local currentHealth = GetEntityHealth(PlayerPedId())
     TriggerServerEvent('rsg-appearance:LoadSkin')
+    Wait(1000)
+    SetEntityHealth(PlayerPedId(), currentHealth )
 end
 
 SetCurrentCleaniest = function(rag, value)
