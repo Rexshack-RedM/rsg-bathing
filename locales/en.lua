@@ -6,7 +6,10 @@ local Translations = {
         var = 'text goes here',
     },
     primary = {
-        var = 'text goes here',
+        use_bath  = 'Use the Bath (%s$)',
+        scrub  = 'Scrub ',
+        service  = 'Luxury Service (%s$)',
+        out  = 'Get Out',
     },
     menu = {
         var = 'text goes here',
