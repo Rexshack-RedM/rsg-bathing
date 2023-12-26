@@ -99,10 +99,10 @@ Config.BathingModes = {
 Config.DressElements = {}
 
 Config.Prompts = {
-    { label = ("Use the Bath (%s$)"):format(Config.NormalBathPrice), id = "START_BATHING" },
-    { label = "Scrub ", id = "SCRUB", control = `INPUT_CONTEXT_X`, time = 2000 },
-    { label = ("Luxury Service (%s$)"):format(Config.DeluxeBathPrice), id = "REQUEST_DELUXE_BATHING" },
-    { label = "Get Out", id = "STOP_BATHING", control = `INPUT_INTERACT_NEG` }
+    { label = (Lang:t('primary.use_bath')):format(Config.NormalBathPrice), id = "START_BATHING" },
+    { label = Lang:t('primary.scrub'), id = "SCRUB", control = `INPUT_CONTEXT_X`, time = 2000 },
+    { label = (Lang:t('primary.service')):format(Config.DeluxeBathPrice), id = "REQUEST_DELUXE_BATHING" },
+    { label = Lang:t('primary.out'), id = "STOP_BATHING", control = `INPUT_INTERACT_NEG` }
 }
 
 Config.CreatedEntries = {}
