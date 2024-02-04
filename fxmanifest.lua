@@ -3,7 +3,7 @@ rdr3_warning 'I acknowledge that this is a prerelease build of RedM, and I am aw
 game 'rdr3'
 
 description 'rsg-bathing'
-version '1.0.4'
+version '1.0.5'
 
 client_scripts {
     'client/client.lua',
@@ -26,3 +26,5 @@ dependencies {
     'rsg-appearance',
     'rsg-wardrobe'
 }
+
+lua54 'yes'
