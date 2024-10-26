@@ -16,7 +16,6 @@ Citizen.CreateThread(function()
 
         while true do
             bath = GetClosestConsumer()
-
             if bath then
                 if not PromptsEnabled then TogglePrompts({ "START_BATHING" }, true) end
                 if PromptsEnabled then
@@ -24,16 +23,15 @@ Citizen.CreateThread(function()
                         Action("START_BATHING", bath)
                     end
                 end
-            else 
+            else
                 if PromptsEnabled then TogglePrompts({ "START_BATHING" }, false) end
-                Wait(250) 
+                Wait(250)
             end
             Wait(100)
         end
     end
 end)
 
-local playerCoords = nil
 GetClosestConsumer = function()
     playerCoords = GetEntityCoords(cache.ped)
 
@@ -47,7 +45,7 @@ end
 
 RegisterNetEvent('rsg-bathing:client:StartBath')
 AddEventHandler('rsg-bathing:client:StartBath', function(town)
-    inbath = true 
+    inbath = true
     if Config.BathingZones[town] then
         SetCurrentPedWeapon(cache.ped, `WEAPON_UNARMED`, true, 0, true, true)
 
@@ -65,8 +63,8 @@ AddEventHandler('rsg-bathing:client:StartBath', function(town)
         local animscene = Citizen.InvokeNative(0x1FCA98E33C1437B3, Config.BathingZones[town].dict, 0, "s_regular_intro", false, true)
         SetAnimSceneEntity(animscene, "ARTHUR", cache.ped, 0)
         SetAnimSceneEntity(animscene, "Door", GetEntityByDoorhash(Config.BathingZones[town].door, 0), 0)
-        
-        LoadAnimScene(animscene)  
+
+        LoadAnimScene(animscene)
         while not Citizen.InvokeNative(0x477122B8D05E7968, animscene, 1, 0) do Wait(10) end --// _IS_ANIM_SCENE_LOADED
 
         TriggerMusicEvent("MG_BATHING_START")
@@ -90,7 +88,7 @@ AddEventHandler('rsg-bathing:client:StartBath', function(town)
         TogglePrompts({ "STOP_BATHING", "REQUEST_DELUXE_BATHING", "SCRUB" }, true)
 
         TriggerEvent("rsg-bathing:TASK_MOVE_NETWORK_BY_NAME_WITH_INIT_PARAMS", { cache.ped, "Script_Mini_Game_Bathing_Regular", `CLIPSET@MINI_GAMES@BATHING@REGULAR@ARTHUR`, `DEFAULT`, "BATHING" })
-        TriggerEvent("rsg-bathing:TASK_MOVE_NETWORK_BY_NAME_WITH_INIT_PARAMS", { rag, "Script_Mini_Game_Bathing_Regular", `CLIPSET@MINI_GAMES@BATHING@REGULAR@RAG`, `DEFAULT`, "BATHING" })    
+        TriggerEvent("rsg-bathing:TASK_MOVE_NETWORK_BY_NAME_WITH_INIT_PARAMS", { rag, "Script_Mini_Game_Bathing_Regular", `CLIPSET@MINI_GAMES@BATHING@REGULAR@RAG`, `DEFAULT`, "BATHING" })
 
         ForceEntityAiAndAnimationUpdate(rag, true);
         Citizen.InvokeNative(0x55546004A244302A, cache.ped)
@@ -111,17 +109,17 @@ AddEventHandler('rsg-bathing:client:StartBath', function(town)
 
                 while IsControlPressed(0, `INPUT_CONTEXT_X`) do
                     if IsPromptCompleted("SCRUB") then
-                        if DoesEntityExist(BathingPed) and not Config.BathingModes[bathMode].deluxe then 
-                            bathMode = bathMode+1    
+                        if DoesEntityExist(BathingPed) and not Config.BathingModes[bathMode].deluxe then
+                            bathMode = bathMode + 1
                         end
-                        
+
                         holdTime = holdTime + (Config.BathingModes[bathMode].hold_power or 0.01)
 
                         if GetTaskMoveNetworkState(cache.ped) ~= Config.BathingModes[bathMode].transition then
                             SetCurrentCleaniest(rag, 0.0)
 
                             RequestTaskMoveNetworkStateTransition(cache.ped, Config.BathingModes[bathMode].transition);
-                            RequestTaskMoveNetworkStateTransition((DoesEntityExist(BathingPed) and BathingPed) or rag, Config.BathingModes[bathMode].transition);                    
+                            RequestTaskMoveNetworkStateTransition((DoesEntityExist(BathingPed) and BathingPed) or rag, Config.BathingModes[bathMode].transition);
                         end
 
                         SetTaskMoveNetworkSignalFloat(cache.ped, "scrub_freq", Config.BathingModes[bathMode].scrub_freq);
@@ -134,8 +132,8 @@ AddEventHandler('rsg-bathing:client:StartBath', function(town)
 
                             if bathMode+1 > #Config.BathingModes then
 
-                                TogglePrompts({ "REQUEST_DELUXE_BATHING", "SCRUB" }, false)                            
-                                
+                                TogglePrompts({ "REQUEST_DELUXE_BATHING", "SCRUB" }, false)
+
                                 ClearPedEnvDirt(cache.ped)
                                 ClearPedBloodDamage(cache.ped)
                                 N_0xe3144b932dfdff65(cache.ped, 0.0, -1, 1, 1)
@@ -148,7 +146,7 @@ AddEventHandler('rsg-bathing:client:StartBath', function(town)
                                 end
                             else bathMode = bathMode+1 end
 
-                            break 
+                            break
                         end
                     end
                     Wait(100)
@@ -158,7 +156,7 @@ AddEventHandler('rsg-bathing:client:StartBath', function(town)
                 local resetTo = (((bathMode == #Config.BathingModes+1) or DoesEntityExist(BathingPed)) and "Bathing" or "Scrub_Idle")
                 while GetTaskMoveNetworkState(cache.ped) ~= resetTo do
                     SetCurrentCleaniest(rag, 1.0)
-                    
+
                     while GetTaskMoveNetworkState(cache.ped) ~= "Scrub_Idle" do
                         RequestTaskMoveNetworkStateTransition(cache.ped, "Scrub_Idle");
                         RequestTaskMoveNetworkStateTransition((DoesEntityExist(BathingPed) and BathingPed) or rag, "Scrub_Idle");
@@ -176,7 +174,7 @@ AddEventHandler('rsg-bathing:client:StartBath', function(town)
             end
 
             if IsPromptCompleted("REQUEST_DELUXE_BATHING") then
-                Action("REQUEST_DELUXE_BATHING", animscene, town, cam) 
+                Action("REQUEST_DELUXE_BATHING", animscene, town, cam)
             end
 
             if IsPromptCompleted("STOP_BATHING") then
@@ -188,13 +186,13 @@ AddEventHandler('rsg-bathing:client:StartBath', function(town)
 end)
 
 ExitBathing = function(animscene, town, cam)
-    inbath = false 
+    inbath = false
     if DoesEntityExist(BathingPed) then
         ExitPremiumBath(animscene, town, cam)
         return
     end
 
-    if Citizen.InvokeNative(0x25557E324489393C, animscene) then 
+    if Citizen.InvokeNative(0x25557E324489393C, animscene) then
         Citizen.InvokeNative(0x84EEDB2C6E650000, animscene) --// _DELETE_ANIM_SCENE
     end
 
@@ -202,19 +200,19 @@ ExitBathing = function(animscene, town, cam)
     SetAnimSceneEntity(animscene, "ARTHUR", cache.ped, 0)
     SetAnimSceneEntity(animscene, "Door", GetEntityByDoorhash(Config.BathingZones[town].door, 0), 0)
 
-    LoadAnimScene(animscene)  
+    LoadAnimScene(animscene)
     while not Citizen.InvokeNative(0x477122B8D05E7968, animscene, 1, 0) do Wait(10) end --// _IS_ANIM_SCENE_LOADED
     StartAnimScene(animscene)
 
-    if DoesCamExist(cam) then 
+    if DoesCamExist(cam) then
         RenderScriptCams(false, false, 0, true, false, 0)
-        DestroyCam(cam) 
+        DestroyCam(cam)
     end
 
     while Citizen.InvokeNative(0x3FBC3F51BF12DFBF, animscene, Citizen.ResultAsFloat()) <= 0.35 do Wait(1) end
-    
+
     while not Citizen.InvokeNative(0xD8254CB2C586412B, animscene, true) do Wait(10) end --// _IS_ANIM_SCENE_FINISHED
-    
+
     DressCharacter()
     UnloadAllStreamings()
     N_0x69d65e89ffd72313(false, false)
@@ -240,7 +238,7 @@ AddEventHandler('rsg-bathing:client:StartDeluxeBath', function(animscene, town, 
         local animscene = Citizen.InvokeNative(0x1FCA98E33C1437B3, Config.BathingZones[town].dict, 0,  "s_deluxe_intro", false, true)
         SetAnimSceneEntity(animscene, "ARTHUR", cache.ped, 0)
         SetAnimSceneEntity(animscene, "Door", GetEntityByDoorhash(Config.BathingZones[town].door, 0), 0)
-        
+
         LoadModel(Config.BathingZones[town].guy)
         BathingPed = CreatePed(Config.BathingZones[town].guy, GetEntityCoords(cache.ped)-vector3(0.0, 0.0, -5.0), 0.0, false, false, true, true)
         table.insert(Config.CreatedEntries, { type = "PED", handle = BathingPed })
@@ -248,7 +246,7 @@ AddEventHandler('rsg-bathing:client:StartDeluxeBath', function(animscene, town, 
         SetAnimSceneEntity(animscene, "Female", BathingPed, 0)
         SetModelAsNoLongerNeeded(Config.BathingZones[town].guy)
 
-        LoadAnimScene(animscene)  
+        LoadAnimScene(animscene)
         while not Citizen.InvokeNative(0x477122B8D05E7968, animscene, 1, 0) do Wait(10) end --// _IS_ANIM_SCENE_LOADED
         PlaySoundFrontend("BATHING_DOOR_KNOCK_MASTER", 0, true, 0)
         Wait(1000)
@@ -260,8 +258,8 @@ AddEventHandler('rsg-bathing:client:StartDeluxeBath', function(animscene, town, 
         Citizen.InvokeNative(0x84EEDB2C6E650000, animscene) --// _DELETE_ANIM_SCENE
 
         TriggerEvent("rsg-bathing:TASK_MOVE_NETWORK_BY_NAME_WITH_INIT_PARAMS", { cache.ped, "Script_Mini_Game_Bathing_Deluxe", `CLIPSET@MINI_GAMES@BATHING@DELUXE@ARTHUR`, `DEFAULT`, "BATHING" })
-        TriggerEvent("rsg-bathing:TASK_MOVE_NETWORK_BY_NAME_WITH_INIT_PARAMS", { BathingPed, "Script_Mini_Game_Bathing_Deluxe", `CLIPSET@MINI_GAMES@BATHING@DELUXE@MAID`, `DEFAULT`, "BATHING" })    
-            
+        TriggerEvent("rsg-bathing:TASK_MOVE_NETWORK_BY_NAME_WITH_INIT_PARAMS", { BathingPed, "Script_Mini_Game_Bathing_Deluxe", `CLIPSET@MINI_GAMES@BATHING@DELUXE@MAID`, `DEFAULT`, "BATHING" })
+
         TogglePrompts({ "STOP_BATHING", "SCRUB" }, true)
 
         RenderScriptCams(true, true, 0, true, false, 0)
@@ -272,7 +270,7 @@ AddEventHandler('rsg-bathing:client:StartDeluxeBath', function(animscene, town, 
         local animscene = Citizen.InvokeNative(0x1FCA98E33C1437B3, Config.BathingZones[town].dict, 0,  "s_deluxe_intro", false, true)
         SetAnimSceneEntity(animscene, "ARTHUR", cache.ped, 0)
         SetAnimSceneEntity(animscene, "Door", GetEntityByDoorhash(Config.BathingZones[town].door, 0), 0)
-        
+
         LoadModel(Config.BathingZones[town].lady)
         BathingPed = CreatePed(Config.BathingZones[town].lady, GetEntityCoords(cache.ped)-vector3(0.0, 0.0, -5.0), 0.0, false, false, true, true)
         table.insert(Config.CreatedEntries, { type = "PED", handle = BathingPed })
@@ -280,7 +278,7 @@ AddEventHandler('rsg-bathing:client:StartDeluxeBath', function(animscene, town, 
         SetAnimSceneEntity(animscene, "Female", BathingPed, 0)
         SetModelAsNoLongerNeeded(Config.BathingZones[town].lady)
 
-        LoadAnimScene(animscene)  
+        LoadAnimScene(animscene)
         while not Citizen.InvokeNative(0x477122B8D05E7968, animscene, 1, 0) do Wait(10) end --// _IS_ANIM_SCENE_LOADED
         PlaySoundFrontend("BATHING_DOOR_KNOCK_MASTER", 0, true, 0)
         Wait(1000)
@@ -292,8 +290,8 @@ AddEventHandler('rsg-bathing:client:StartDeluxeBath', function(animscene, town, 
         Citizen.InvokeNative(0x84EEDB2C6E650000, animscene) --// _DELETE_ANIM_SCENE
 
         TriggerEvent("rsg-bathing:TASK_MOVE_NETWORK_BY_NAME_WITH_INIT_PARAMS", { cache.ped, "Script_Mini_Game_Bathing_Deluxe", `CLIPSET@MINI_GAMES@BATHING@DELUXE@ARTHUR`, `DEFAULT`, "BATHING" })
-        TriggerEvent("rsg-bathing:TASK_MOVE_NETWORK_BY_NAME_WITH_INIT_PARAMS", { BathingPed, "Script_Mini_Game_Bathing_Deluxe", `CLIPSET@MINI_GAMES@BATHING@DELUXE@MAID`, `DEFAULT`, "BATHING" })    
-            
+        TriggerEvent("rsg-bathing:TASK_MOVE_NETWORK_BY_NAME_WITH_INIT_PARAMS", { BathingPed, "Script_Mini_Game_Bathing_Deluxe", `CLIPSET@MINI_GAMES@BATHING@DELUXE@MAID`, `DEFAULT`, "BATHING" })
+
         TogglePrompts({ "STOP_BATHING", "SCRUB" }, true)
 
         RenderScriptCams(true, true, 0, true, false, 0)
@@ -312,7 +310,7 @@ ExitPremiumBath = function(animscene, town, cam, disableScrub)
     SetAnimSceneEntity(animscene, "Female", BathingPed, 0)
     SetAnimSceneEntity(animscene, "Door", Citizen.InvokeNative(0xF7424890E4A094C0, Config.BathingZones[town].door, 0), 0)
 
-    LoadAnimScene(animscene)  
+    LoadAnimScene(animscene)
     while not Citizen.InvokeNative(0x477122B8D05E7968, animscene, 1, 0) do Wait(10) end --// _IS_ANIM_SCENE_LOADED
     StartAnimScene(animscene)
 
@@ -321,8 +319,8 @@ ExitPremiumBath = function(animscene, town, cam, disableScrub)
     while not Citizen.InvokeNative(0xD8254CB2C586412B, animscene, true) do Wait(10) end --// _IS_ANIM_SCENE_FINISHED
 
     TriggerEvent("rsg-bathing:TASK_MOVE_NETWORK_BY_NAME_WITH_INIT_PARAMS", { cache.ped, "Script_Mini_Game_Bathing_Regular", `CLIPSET@MINI_GAMES@BATHING@REGULAR@ARTHUR`, `DEFAULT`, "BATHING" })
-    TriggerEvent("rsg-bathing:TASK_MOVE_NETWORK_BY_NAME_WITH_INIT_PARAMS", { BathingPed, "Script_Mini_Game_Bathing_Deluxe", `CLIPSET@MINI_GAMES@BATHING@REGULAR@MAID`, `DEFAULT`, "BATHING" })    
-        
+    TriggerEvent("rsg-bathing:TASK_MOVE_NETWORK_BY_NAME_WITH_INIT_PARAMS", { BathingPed, "Script_Mini_Game_Bathing_Deluxe", `CLIPSET@MINI_GAMES@BATHING@REGULAR@MAID`, `DEFAULT`, "BATHING" })
+
     TogglePrompts({ "STOP_BATHING", "SCRUB" }, true)
     if IsPromptEnabled("SCRUB") and disableScrub then TogglePrompts({ "SCRUB" }, false) end
 
@@ -468,7 +466,7 @@ end
 
 -- blips
 CreateBlips = function()
-    for townName,data in pairs(Config.BathingZones) do
+    for townName, data in pairs(Config.BathingZones) do
         Wait(10)
         local blip = Citizen.InvokeNative(0x554D9D53F696D002, 0xB04092F8, data.consumer)
         Citizen.InvokeNative(0x9CB1A1623062F402, blip, CreateVarString(10, "blip_bath_house"))
@@ -487,7 +485,7 @@ CloseBathDoors = function()
                 DoorSystemSetDoorState(data.door, 1)     
             end
         end
-    end      
+    end
 end
 
 AddEventHandler('onResourceStop', function(resource)
