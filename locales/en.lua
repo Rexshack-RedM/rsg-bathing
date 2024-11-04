@@ -27,5 +27,3 @@ Lang = Locale:new({
     phrases = Translations,
     warnOnMissing = true
 })
-
--- Lang:t('error.no_item')
