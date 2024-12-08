@@ -365,12 +365,12 @@ end
 UndressCharacter = function()
     local ped = cache.ped
     local EquippedWeapons = exports['rsg-weapons']:EquippedWeapons()
+
     for _, weaponData in ipairs(EquippedWeapons) do
-        if weaponData.weaponHash and weaponData.serial then
-            exports['rsg-weapons']:RemoveWeaponFromPeds(weaponData.weaponHash, weaponData.serial)
-        end
-        TriggerEvent('rsg-wardrobe:client:removeAllClothing')
+        exports['rsg-weapons']:RemoveWeaponFromPeds(weaponData.name, weaponData.id)
     end
+
+    TriggerEvent('rsg-wardrobe:client:removeAllClothing')
 end
 
 DressCharacter = function()
