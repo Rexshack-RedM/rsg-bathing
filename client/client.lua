@@ -368,8 +368,8 @@ UndressCharacter = function()
     for _, weaponData in ipairs(EquippedWeapons) do
         if weaponData.weaponHash and weaponData.serial then
             exports['rsg-weapons']:RemoveWeaponFromPeds(weaponData.weaponHash, weaponData.serial)
-    end
-    TriggerEvent('rsg-wardrobe:client:removeAllClothing')
+        end
+        TriggerEvent('rsg-wardrobe:client:removeAllClothing')
     end
 end
 
