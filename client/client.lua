@@ -369,7 +369,7 @@ UndressCharacter = function()
     EquippedWeapons = exports['rsg-weapons']:EquippedWeapons()
 
     for i = 1, #EquippedWeapons do
-        exports['rsg-weapons']:RemoveWeaponFromPeds(EquippedWeapons[i].name, EquippedWeapons[i].serial)
+        exports['rsg-weapons']:RemoveWeaponFromPeds(EquippedWeapons[i].name, EquippedWeapons[i].id)
     end
 
     TriggerEvent('rsg-wardrobe:client:removeAllClothing')
