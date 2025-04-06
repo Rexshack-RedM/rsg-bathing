@@ -45,6 +45,7 @@ end
 RegisterNetEvent('rsg-bathing:client:StartBath')
 AddEventHandler('rsg-bathing:client:StartBath', function(town)
     LocalPlayer.state.isBathingActive = true
+    LocalPlayer.state.invincible = true
     if Config.BathingZones[town] then
         SetCurrentPedWeapon(cache.ped, `WEAPON_UNARMED`, true, 0, true, true)
 
@@ -112,7 +113,7 @@ AddEventHandler('rsg-bathing:client:StartBath', function(town)
                             bathMode = bathMode + 1
                         end
 
-                        holdTime = holdTime + (Config.BathingModes[bathMode].hold_power or 0.01)
+                        holdTime = holdTime + (Config.BathingModes[bathMode].hold_power or 0.05)
 
                         if GetTaskMoveNetworkState(cache.ped) ~= Config.BathingModes[bathMode].transition then
                             SetCurrentCleaniest(rag, 0.0)
@@ -210,7 +211,8 @@ ExitBathing = function(animscene, town, cam)
     while Citizen.InvokeNative(0x3FBC3F51BF12DFBF, animscene, Citizen.ResultAsFloat()) <= 0.35 do Wait(1) end
 
     while not Citizen.InvokeNative(0xD8254CB2C586412B, animscene, true) do Wait(10) end --// _IS_ANIM_SCENE_FINISHED
-
+    
+    LocalPlayer.state.invincible = false
     DressCharacter()
     UnloadAllStreamings()
     N_0x69d65e89ffd72313(false, false)
