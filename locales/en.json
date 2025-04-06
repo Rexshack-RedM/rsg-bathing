@@ -1,0 +1,8 @@
+{
+    "prompt_bath": "Use the Bath (%s$)",
+    "prompt_luxury_bath": "Luxury Service (%s$)",
+    "prompt_scrub": "Scrub",
+    "prompt_leave": "Get Out",
+    "notify_not_enough_money": "You don't have enough money!",
+    "notify_occupied": "This room is occupied right now!"
+}
