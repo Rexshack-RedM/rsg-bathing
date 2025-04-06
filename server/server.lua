@@ -13,26 +13,26 @@ AddEventHandler('rsg-bathing:server:canEnterBath', function(town)
             BathingSessions[town] = src
             TriggerClientEvent('rsg-bathing:client:StartBath', src, town)
         else
-            print('NOTIFICATION HERE')
+            TriggerClientEvent('ox_lib:notify', src, { title = locale('notify_not_enough_money'), type = 'error', duration = 5000 })
         end
     else
-        print('NOTIFICATION HERE')
+        TriggerClientEvent('ox_lib:notify', src, { title = locale('notify_occupied'), type = 'error', duration = 5000 })
     end
 end)
 
 RegisterServerEvent('rsg-bathing:server:canEnterDeluxeBath')
-AddEventHandler('rsg-bathing:server:canEnterDeluxeBath', function(p1 , p2 , p3)
+AddEventHandler('rsg-bathing:server:canEnterDeluxeBath', function(animscene, town, cam)
     local src = source
-    if BathingSessions[p2] == src then
+    if BathingSessions[town] == src then
 
         local Player = RSGCore.Functions.GetPlayer(src)
         local currentMoney = Player.PlayerData.money['cash']
 
         if currentMoney >= Config.DeluxeBathPrice then
             Player.Functions.RemoveMoney('cash', Config.DeluxeBathPrice)
-            TriggerClientEvent('rsg-bathing:client:StartDeluxeBath', src , p1 , p2 , p3)
+            TriggerClientEvent('rsg-bathing:client:StartDeluxeBath', src, animscene, town, cam)
         else
-            print('NOTIFICATION HERE')
+            TriggerClientEvent('ox_lib:notify', src, { title = locale('notify_not_enough_money'), type = 'error', duration = 5000 })
             TriggerClientEvent('rsg-bathing:client:HideDeluxePrompt', src)
         end
     end

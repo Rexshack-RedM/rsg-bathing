@@ -1,3 +1,5 @@
+lib.locale()
+
 Config = {}
 
 Config.NormalBathPrice = 1
@@ -99,10 +101,10 @@ Config.BathingModes = {
 Config.DressElements = {}
 
 Config.Prompts = {
-    { label = (Lang:t('primary.use_bath')):format(Config.NormalBathPrice), id = "START_BATHING" },
-    { label = Lang:t('primary.scrub'), id = "SCRUB", control = `INPUT_CONTEXT_X`, time = 2000 },
-    { label = (Lang:t('primary.service')):format(Config.DeluxeBathPrice), id = "REQUEST_DELUXE_BATHING" },
-    { label = Lang:t('primary.out'), id = "STOP_BATHING", control = `INPUT_INTERACT_NEG` }
+    { label = locale('prompt_bath', Config.NormalBathPrice), id = "START_BATHING" },
+    { label = locale('prompt_scrub'), id = "SCRUB", control = `INPUT_CONTEXT_X`, time = 2000 },
+    { label = locale('prompt_luxury_bath', Config.DeluxeBathPrice), id = "REQUEST_DELUXE_BATHING" },
+    { label = locale('prompt_leave'), id = "STOP_BATHING", control = `INPUT_INTERACT_NEG` }
 }
 
 Config.CreatedEntries = {}

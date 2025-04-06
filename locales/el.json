@@ -1,0 +1,8 @@
+{
+    "prompt_bath": "Χρήση Μπάνιου (%s$)",
+    "prompt_luxury_bath": "Πολυτελής Υπηρεσία (%s$)",
+    "prompt_scrub": "Τρίψιμο",
+    "prompt_leave": "Έξοδος",
+    "notify_not_enough_money": "Δεν έχεις αρκετά χρήματα!",
+    "notify_occupied": "Αυτό το δωμάτιο είναι κατειλημμένο αυτήν τη στιγμή!"
+}
