@@ -48,6 +48,8 @@ AddEventHandler('rsg-bathing:client:StartBath', function(town)
     LocalPlayer.state.invincible = true
     if Config.BathingZones[town] then
         SetCurrentPedWeapon(cache.ped, `WEAPON_UNARMED`, true, 0, true, true)
+        Citizen.InvokeNative(0x4820A6939D7CEF28, cache.ped, true)--Rifles and bows on the shoulder
+        HolsterPedWeapons(cache.ped, false, false, false, true)--knives and pistols in a holster
 
         LoadAllStreamings()
 
@@ -331,14 +333,8 @@ UnloadAllStreamings = function()
     Citizen.InvokeNative(0x57A197AD83F66BBF, "Script_Mini_Game_Bathing_Deluxe");
 end
 
-UndressCharacter = function()
-    local ped = cache.ped
-    local EquippedWeapons = exports['rsg-weapons']:EquippedWeapons()
-
-    for _, weaponData in ipairs(EquippedWeapons) do
-        exports['rsg-weapons']:RemoveWeaponFromPeds(weaponData.name, weaponData.id)
-    end
-
+function UndressCharacter()
+    SetPedAllWeaponsVisibility(cache.ped, false)-- we hide the weapon
     TriggerEvent('rsg-wardrobe:client:removeAllClothing')
 end
 
@@ -348,6 +344,7 @@ DressCharacter = function()
     local currentStamina = Citizen.InvokeNative(0x775A1CA7893AA8B5, cache.ped, Citizen.ResultAsFloat()) / maxStamina * 100
     ExecuteCommand('loadskin')
     Wait(1000)
+    SetPedAllWeaponsVisibility(cache.ped, true)-- we show the weapon
     SetEntityHealth(cache.ped, currentHealth )
     Citizen.InvokeNative(0xC3D4B754C0E86B9E, cache.ped, currentStamina)
 end
