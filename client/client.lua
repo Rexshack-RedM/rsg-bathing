@@ -342,7 +342,7 @@ DressCharacter = function()
     local currentHealth = GetEntityHealth(cache.ped)
     local maxStamina = Citizen.InvokeNative(0xCB42AFE2B613EE55, cache.ped, Citizen.ResultAsFloat())
     local currentStamina = Citizen.InvokeNative(0x775A1CA7893AA8B5, cache.ped, Citizen.ResultAsFloat()) / maxStamina * 100
-    ExecuteCommand('loadskin')
+    ExecuteCommand('dress')
     Wait(1000)
     SetPedAllWeaponsVisibility(cache.ped, true)-- we show the weapon
     SetEntityHealth(cache.ped, currentHealth )
