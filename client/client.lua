@@ -111,6 +111,8 @@ AddEventHandler('rsg-bathing:client:StartBath', function(town)
 
                 while IsControlPressed(0, `INPUT_CONTEXT_X`) do
                     if IsPromptCompleted("SCRUB") then
+                        ClearPedEnvDirt(cache.ped)
+                        ClearPedBloodDamage(cache.ped)
                         if DoesEntityExist(BathingPed) and not Config.BathingModes[bathMode].deluxe then
                             bathMode = bathMode + 1
                         end
