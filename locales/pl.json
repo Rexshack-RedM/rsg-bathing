@@ -1,0 +1,8 @@
+{
+    "prompt_bath": "Wejdź do kąpieli (%s$)",
+    "prompt_luxury_bath": "Luksusowa usługa (%s$)",
+    "prompt_scrub": "Pocieraj",
+    "prompt_leave": "Wyjdź",
+    "notify_not_enough_money": "Nie masz wystarczająco pieniędzy!",
+    "notify_occupied": "Ten pokój jest aktualnie zajęty!"
+}
