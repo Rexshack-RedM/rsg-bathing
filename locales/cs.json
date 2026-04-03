@@ -1,0 +1,8 @@
+{
+    "prompt_bath": "Použít koupel (%s$)",
+    "prompt_luxury_bath": "Luxusní služba (%s$)",
+    "prompt_scrub": "Drhnutí",
+    "prompt_leave": "Odejít",
+    "notify_not_enough_money": "Nemáte dostatek peněz!",
+    "notify_occupied": "Tato místnost je právě obsazena!"
+}
