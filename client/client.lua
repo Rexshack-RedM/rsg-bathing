@@ -1,9 +1,17 @@
 local RSGCore = exports['rsg-core']:GetCoreObject()
 BathingPed = nil
+local currentAnimScene = nil
+local currentCam = nil
+local currentTown = nil
 
 ---@deprecated use state isBathingActive
 exports('IsBathingActive', function()
     return LocalPlayer.state.isBathingActive
+end)
+
+RegisterNetEvent('rsg-bathing:client:ToggleInvincibility')
+AddEventHandler('rsg-bathing:client:ToggleInvincibility', function(state)
+    LocalPlayer.state.invincible = state
 end)
 
 Citizen.CreateThread(function()
@@ -19,7 +27,8 @@ Citizen.CreateThread(function()
                 if not PromptsEnabled then TogglePrompts({ "START_BATHING" }, true) end
                 if PromptsEnabled then
                     if IsPromptCompleted("START_BATHING") then
-                        Action("START_BATHING", bath)
+                        currentTown = bath
+                        Action("START_BATHING")
                     end
                 end
             else
@@ -45,11 +54,11 @@ end
 RegisterNetEvent('rsg-bathing:client:StartBath')
 AddEventHandler('rsg-bathing:client:StartBath', function(town)
     LocalPlayer.state.isBathingActive = true
-    LocalPlayer.state.invincible = true
+    currentTown = town
     if Config.BathingZones[town] then
         SetCurrentPedWeapon(cache.ped, `WEAPON_UNARMED`, true, 0, true, true)
-        Citizen.InvokeNative(0x4820A6939D7CEF28, cache.ped, true)--Rifles and bows on the shoulder
-        HolsterPedWeapons(cache.ped, false, false, false, true)--knives and pistols in a holster
+        Citizen.InvokeNative(0x4820A6939D7CEF28, cache.ped, true)
+        HolsterPedWeapons(cache.ped, false, false, false, true)
 
         LoadAllStreamings()
 
@@ -62,29 +71,29 @@ AddEventHandler('rsg-bathing:client:StartBath', function(town)
         SetPedLegIkMode(cache.ped, 0)
         ClearPedTasksImmediately(cache.ped, true, true)
 
-        local animscene = Citizen.InvokeNative(0x1FCA98E33C1437B3, Config.BathingZones[town].dict, 0, "s_regular_intro", false, true)
-        SetAnimSceneEntity(animscene, "ARTHUR", cache.ped, 0)
-        SetAnimSceneEntity(animscene, "Door", GetEntityByDoorhash(Config.BathingZones[town].door, 0), 0)
+        currentAnimScene = Citizen.InvokeNative(0x1FCA98E33C1437B3, Config.BathingZones[town].dict, 0, "s_regular_intro", false, true)
+        SetAnimSceneEntity(currentAnimScene, "ARTHUR", cache.ped, 0)
+        SetAnimSceneEntity(currentAnimScene, "Door", GetEntityByDoorhash(Config.BathingZones[town].door, 0), 0)
 
-        LoadAnimScene(animscene)
-        while not Citizen.InvokeNative(0x477122B8D05E7968, animscene, 1, 0) do Wait(10) end --// _IS_ANIM_SCENE_LOADED
+        LoadAnimScene(currentAnimScene)
+        while not Citizen.InvokeNative(0x477122B8D05E7968, currentAnimScene, 1, 0) do Wait(10) end
 
         TriggerMusicEvent("MG_BATHING_START")
-        StartAnimScene(animscene)
+        StartAnimScene(currentAnimScene)
 
-        while Citizen.InvokeNative(0x3FBC3F51BF12DFBF, animscene, Citizen.ResultAsFloat()) <= 0.3 do Wait(0) end
+        while Citizen.InvokeNative(0x3FBC3F51BF12DFBF, currentAnimScene, Citizen.ResultAsFloat()) <= 0.3 do Wait(0) end
 
         UndressCharacter()
 
-        while not Citizen.InvokeNative(0xD8254CB2C586412B, animscene, true) do Wait(0) end
+        while not Citizen.InvokeNative(0xD8254CB2C586412B, currentAnimScene, true) do Wait(0) end
 
-        local cam = CreateCam("DEFAULT_SCRIPTED_CAMERA", 1)
-        table.insert(Config.CreatedEntries, { type = "CAM", handle = cam })
+        currentCam = CreateCam("DEFAULT_SCRIPTED_CAMERA", 1)
+        table.insert(Config.CreatedEntries, { type = "CAM", handle = currentCam })
 
         N_0x69d65e89ffd72313(true, true)
-        SetCamCoord(cam, GetFinalRenderedCamCoord(), 0.0, 0.4, 0.5)
-        SetCamRot(cam, GetFinalRenderedCamRot(1), 1)
-        SetCamFov(cam, GetFinalRenderedCamFov())
+        SetCamCoord(currentCam, GetFinalRenderedCamCoord(), 0.0, 0.4, 0.5)
+        SetCamRot(currentCam, GetFinalRenderedCamRot(1), 1)
+        SetCamFov(currentCam, GetFinalRenderedCamFov())
         RenderScriptCams(true, true, 0, true, false, 0)
 
         TogglePrompts({ "STOP_BATHING", "REQUEST_DELUXE_BATHING", "SCRUB" }, true)
@@ -96,7 +105,7 @@ AddEventHandler('rsg-bathing:client:StartBath', function(town)
         Citizen.InvokeNative(0x55546004A244302A, cache.ped)
 
         local holdTime, bathMode = 0, 1
-        while DoesCamExist(cam) do
+        while DoesCamExist(currentCam) do
             while not IsTaskMoveNetworkReadyForTransition(cache.ped) do Wait(100) end
 
             if IsPromptEnabled("SCRUB") and bathMode == #Config.BathingModes+1 then TogglePrompts({ "SCRUB" }, false) end
@@ -146,7 +155,7 @@ AddEventHandler('rsg-bathing:client:StartBath', function(town)
 
                                 bathMode = #Config.BathingModes+1
                                 if DoesEntityExist(BathingPed) then
-                                    Wait(750) ExitPremiumBath(animscene, town, cam, true)
+                                    Wait(750) ExitPremiumBath(true)
                                 end
                             else bathMode = bathMode+1 end
 
@@ -178,45 +187,50 @@ AddEventHandler('rsg-bathing:client:StartBath', function(town)
             end
 
             if IsPromptCompleted("REQUEST_DELUXE_BATHING") then
-                Action("REQUEST_DELUXE_BATHING", animscene, town, cam)
+                Action("REQUEST_DELUXE_BATHING")
             end
 
             if IsPromptCompleted("STOP_BATHING") then
-                Action("STOP_BATHING", animscene, town, cam)
+                Action("STOP_BATHING")
             end
             Wait(10)
         end
     end
 end)
 
-ExitBathing = function(animscene, town, cam)
+ExitBathing = function()
+    local town, cam = currentTown, currentCam
     if DoesEntityExist(BathingPed) then
-        ExitPremiumBath(animscene, town, cam)
+        ExitPremiumBath()
         return
     end
 
-    if Citizen.InvokeNative(0x25557E324489393C, animscene) then
-        Citizen.InvokeNative(0x84EEDB2C6E650000, animscene) --// _DELETE_ANIM_SCENE
+    if currentAnimScene and Citizen.InvokeNative(0x25557E324489393C, currentAnimScene) then
+        Citizen.InvokeNative(0x84EEDB2C6E650000, currentAnimScene)
     end
 
-    local animscene = Citizen.InvokeNative(0x1FCA98E33C1437B3, Config.BathingZones[town].dict, 0,  "s_regular_outro", false, true)
-    SetAnimSceneEntity(animscene, "ARTHUR", cache.ped, 0)
-    SetAnimSceneEntity(animscene, "Door", GetEntityByDoorhash(Config.BathingZones[town].door, 0), 0)
+    local outroScene = Citizen.InvokeNative(0x1FCA98E33C1437B3, Config.BathingZones[town].dict, 0, "s_regular_outro", false, true)
+    SetAnimSceneEntity(outroScene, "ARTHUR", cache.ped, 0)
+    SetAnimSceneEntity(outroScene, "Door", GetEntityByDoorhash(Config.BathingZones[town].door, 0), 0)
 
-    LoadAnimScene(animscene)
-    while not Citizen.InvokeNative(0x477122B8D05E7968, animscene, 1, 0) do Wait(10) end --// _IS_ANIM_SCENE_LOADED
-    StartAnimScene(animscene)
+    LoadAnimScene(outroScene)
+    while not Citizen.InvokeNative(0x477122B8D05E7968, outroScene, 1, 0) do Wait(10) end
+    StartAnimScene(outroScene)
 
     if DoesCamExist(cam) then
         RenderScriptCams(false, false, 0, true, false, 0)
         DestroyCam(cam)
+        currentCam = nil
     end
 
-    while Citizen.InvokeNative(0x3FBC3F51BF12DFBF, animscene, Citizen.ResultAsFloat()) <= 0.35 do Wait(1) end
+    while Citizen.InvokeNative(0x3FBC3F51BF12DFBF, outroScene, Citizen.ResultAsFloat()) <= 0.35 do Wait(1) end
 
-    while not Citizen.InvokeNative(0xD8254CB2C586412B, animscene, true) do Wait(10) end --// _IS_ANIM_SCENE_FINISHED
-    
-    LocalPlayer.state.invincible = false
+    while not Citizen.InvokeNative(0xD8254CB2C586412B, outroScene, true) do Wait(10) end
+
+    if Citizen.InvokeNative(0x25557E324489393C, outroScene) then
+        Citizen.InvokeNative(0x84EEDB2C6E650000, outroScene)
+    end
+
     DressCharacter()
     UnloadAllStreamings()
     N_0x69d65e89ffd72313(false, false)
@@ -226,42 +240,41 @@ ExitBathing = function(animscene, town, cam)
     TriggerEvent('hud:client:UpdateCleanliness', 100)
     TriggerServerEvent("rsg-bathing:server:setBathAsFree", town)
 
-    if DoesEntityExist(Citizen.InvokeNative(0xE5822422197BBBA3, animscene, "Female", false)) then
-        DeletePed(Citizen.InvokeNative(0xE5822422197BBBA3, animscene, "Female", false))
-    end
-
     SetPedCanLegIk(cache.ped, true)
     SetPedLegIkMode(cache.ped, 2)
     LocalPlayer.state.isBathingActive = false
 end
 
 RegisterNetEvent('rsg-bathing:client:StartDeluxeBath')
-AddEventHandler('rsg-bathing:client:StartDeluxeBath', function(animscene, town, cam)
-    if not Citizen.InvokeNative(0x25557E324489393C, animscene) then return end
-    Citizen.InvokeNative(0x84EEDB2C6E650000, animscene) --// _DELETE_ANIM_SCENE
+AddEventHandler('rsg-bathing:client:StartDeluxeBath', function(town)
+    if not currentAnimScene or not Citizen.InvokeNative(0x25557E324489393C, currentAnimScene) then return end
+    Citizen.InvokeNative(0x84EEDB2C6E650000, currentAnimScene)
 
-    local animscene = Citizen.InvokeNative(0x1FCA98E33C1437B3, Config.BathingZones[town].dict, 0,  "s_deluxe_intro", false, true)
-    SetAnimSceneEntity(animscene, "ARTHUR", cache.ped, 0)
-    SetAnimSceneEntity(animscene, "Door", GetEntityByDoorhash(Config.BathingZones[town].door, 0), 0)
+    currentAnimScene = Citizen.InvokeNative(0x1FCA98E33C1437B3, Config.BathingZones[town].dict, 0, "s_deluxe_intro", false, true)
+    SetAnimSceneEntity(currentAnimScene, "ARTHUR", cache.ped, 0)
+    SetAnimSceneEntity(currentAnimScene, "Door", GetEntityByDoorhash(Config.BathingZones[town].door, 0), 0)
 
     local model = IsPedMale(cache.ped) and Config.BathingZones[town].lady or Config.BathingZones[town].guy
     LoadModel(model)
     BathingPed = CreatePed(model, GetEntityCoords(cache.ped)-vector3(0.0, 0.0, -5.0), 0.0, false, false, true, true)
     table.insert(Config.CreatedEntries, { type = "PED", handle = BathingPed })
     Citizen.InvokeNative(0x283978A15512B2FE, BathingPed, true)
-    SetAnimSceneEntity(animscene, "Female", BathingPed, 0)
+    SetAnimSceneEntity(currentAnimScene, "Female", BathingPed, 0)
     SetModelAsNoLongerNeeded(model)
 
-    LoadAnimScene(animscene)
-    while not Citizen.InvokeNative(0x477122B8D05E7968, animscene, 1, 0) do Wait(10) end --// _IS_ANIM_SCENE_LOADED
+    LoadAnimScene(currentAnimScene)
+    while not Citizen.InvokeNative(0x477122B8D05E7968, currentAnimScene, 1, 0) do Wait(10) end
     PlaySoundFrontend("BATHING_DOOR_KNOCK_MASTER", 0, true, 0)
     Wait(1000)
-    StartAnimScene(animscene)
+    StartAnimScene(currentAnimScene)
 
     RenderScriptCams(false, false, 0, true, false, 0)
 
-    while not Citizen.InvokeNative(0xD8254CB2C586412B, animscene, true) do Wait(10) end --// _IS_ANIM_SCENE_FINISHED
-    Citizen.InvokeNative(0x84EEDB2C6E650000, animscene) --// _DELETE_ANIM_SCENE
+    while not Citizen.InvokeNative(0xD8254CB2C586412B, currentAnimScene, true) do Wait(10) end
+
+    if Citizen.InvokeNative(0x25557E324489393C, currentAnimScene) then
+        Citizen.InvokeNative(0x84EEDB2C6E650000, currentAnimScene)
+    end
 
     TriggerEvent("rsg-bathing:TASK_MOVE_NETWORK_BY_NAME_WITH_INIT_PARAMS", { cache.ped, "Script_Mini_Game_Bathing_Deluxe", `CLIPSET@MINI_GAMES@BATHING@DELUXE@ARTHUR`, `DEFAULT`, "BATHING" })
     TriggerEvent("rsg-bathing:TASK_MOVE_NETWORK_BY_NAME_WITH_INIT_PARAMS", { BathingPed, "Script_Mini_Game_Bathing_Deluxe", `CLIPSET@MINI_GAMES@BATHING@DELUXE@MAID`, `DEFAULT`, "BATHING" })
@@ -277,19 +290,24 @@ AddEventHandler('rsg-bathing:client:HideDeluxePrompt', function()
     TogglePrompts({ "STOP_BATHING", "SCRUB" }, true)
 end)
 
-ExitPremiumBath = function(animscene, town, cam, disableScrub)
-    local animscene = Citizen.InvokeNative(0x1FCA98E33C1437B3, Config.BathingZones[town].dict, 0,  "s_deluxe_outro", false, true)
-    SetAnimSceneEntity(animscene, "ARTHUR", cache.ped, 0)
-    SetAnimSceneEntity(animscene, "Female", BathingPed, 0)
-    SetAnimSceneEntity(animscene, "Door", Citizen.InvokeNative(0xF7424890E4A094C0, Config.BathingZones[town].door, 0), 0)
+ExitPremiumBath = function(disableScrub)
+    local town, cam = currentTown, currentCam
+    local outroScene = Citizen.InvokeNative(0x1FCA98E33C1437B3, Config.BathingZones[town].dict, 0, "s_deluxe_outro", false, true)
+    SetAnimSceneEntity(outroScene, "ARTHUR", cache.ped, 0)
+    SetAnimSceneEntity(outroScene, "Female", BathingPed, 0)
+    SetAnimSceneEntity(outroScene, "Door", Citizen.InvokeNative(0xF7424890E4A094C0, Config.BathingZones[town].door, 0), 0)
 
-    LoadAnimScene(animscene)
-    while not Citizen.InvokeNative(0x477122B8D05E7968, animscene, 1, 0) do Wait(10) end --// _IS_ANIM_SCENE_LOADED
-    StartAnimScene(animscene)
+    LoadAnimScene(outroScene)
+    while not Citizen.InvokeNative(0x477122B8D05E7968, outroScene, 1, 0) do Wait(10) end
+    StartAnimScene(outroScene)
 
     RenderScriptCams(false, false, 0, true, false, 0)
 
-    while not Citizen.InvokeNative(0xD8254CB2C586412B, animscene, true) do Wait(10) end --// _IS_ANIM_SCENE_FINISHED
+    while not Citizen.InvokeNative(0xD8254CB2C586412B, outroScene, true) do Wait(10) end
+
+    if Citizen.InvokeNative(0x25557E324489393C, outroScene) then
+        Citizen.InvokeNative(0x84EEDB2C6E650000, outroScene)
+    end
 
     TriggerEvent("rsg-bathing:TASK_MOVE_NETWORK_BY_NAME_WITH_INIT_PARAMS", { cache.ped, "Script_Mini_Game_Bathing_Regular", `CLIPSET@MINI_GAMES@BATHING@REGULAR@ARTHUR`, `DEFAULT`, "BATHING" })
     TriggerEvent("rsg-bathing:TASK_MOVE_NETWORK_BY_NAME_WITH_INIT_PARAMS", { BathingPed, "Script_Mini_Game_Bathing_Deluxe", `CLIPSET@MINI_GAMES@BATHING@REGULAR@MAID`, `DEFAULT`, "BATHING" })
@@ -299,6 +317,7 @@ ExitPremiumBath = function(animscene, town, cam, disableScrub)
 
     RenderScriptCams(true, true, 0, true, false, 0)
     DeletePed(BathingPed)
+    BathingPed = nil
 end
 
 LoadModel = function(model)
@@ -336,18 +355,20 @@ UnloadAllStreamings = function()
 end
 
 function UndressCharacter()
-    SetPedAllWeaponsVisibility(cache.ped, false)-- we hide the weapon
-    TriggerEvent('rsg-wardrobe:client:removeAllClothing')
+    SetPedAllWeaponsVisibility(cache.ped, false)
+    TriggerServerEvent('rsg-bathing:server:undressPlayer')
 end
 
 DressCharacter = function()
     local currentHealth = GetEntityHealth(cache.ped)
     local maxStamina = Citizen.InvokeNative(0xCB42AFE2B613EE55, cache.ped, Citizen.ResultAsFloat())
     local currentStamina = Citizen.InvokeNative(0x775A1CA7893AA8B5, cache.ped, Citizen.ResultAsFloat()) / maxStamina * 100
-    ExecuteCommand('loadskin')
+    TriggerServerEvent('rsg-bathing:server:dressPlayer')
     Wait(1000)
-    SetPedAllWeaponsVisibility(cache.ped, true)-- we show the weapon
-    SetEntityHealth(cache.ped, currentHealth )
+    Citizen.InvokeNative(0x9C720776DAA43E7E, cache.ped, 0.0)
+    Citizen.InvokeNative(0x44CB6447D2571AA0, cache.ped, -1.0)
+    SetPedAllWeaponsVisibility(cache.ped, true)
+    SetEntityHealth(cache.ped, currentHealth)
     Citizen.InvokeNative(0xC3D4B754C0E86B9E, cache.ped, currentStamina)
 end
 
@@ -373,15 +394,15 @@ SetCurrentCleaniest = function(rag, value)
     end
 end
 
-Action = function(name, animscene, town, cam)
+Action = function(name)
     TogglePrompts("ALL", false)
 
     if (name == "START_BATHING") then
-        TriggerServerEvent("rsg-bathing:server:canEnterBath", animscene)
+        TriggerServerEvent("rsg-bathing:server:canEnterBath", currentTown)
     elseif (name == "REQUEST_DELUXE_BATHING") then
-        TriggerServerEvent("rsg-bathing:server:canEnterDeluxeBath", animscene, town, cam)
+        TriggerServerEvent("rsg-bathing:server:canEnterDeluxeBath", currentTown)
     elseif (name == "STOP_BATHING") then
-        ExitBathing(animscene, town, cam)
+        ExitBathing()
     end
     Wait(500)
 end
@@ -410,10 +431,18 @@ RegisterPrompts = function()
 end
 
 TogglePrompts = function(data, state)
-    for index,prompt in pairs((data ~= "ALL" and data) or Config.Prompts) do
-        if Config.Prompts[(data ~= "ALL" and prompt) or index] then
-            Citizen.InvokeNative(0x8A0FB4D03A630D21, (data ~= "ALL" and Config.Prompts[prompt]) or prompt, state)
-            Citizen.InvokeNative(0x71215ACCFDE075EE, (data ~= "ALL" and Config.Prompts[prompt]) or prompt, state)
+    if data == "ALL" then
+        for _, prompt in pairs(Config.Prompts) do
+            Citizen.InvokeNative(0x8A0FB4D03A630D21, prompt, state)
+            Citizen.InvokeNative(0x71215ACCFDE075EE, prompt, state)
+        end
+    else
+        for _, name in ipairs(data) do
+            local prompt = Config.Prompts[name]
+            if prompt then
+                Citizen.InvokeNative(0x8A0FB4D03A630D21, prompt, state)
+                Citizen.InvokeNative(0x71215ACCFDE075EE, prompt, state)
+            end
         end
     end
     PromptsEnabled = state
@@ -422,13 +451,15 @@ end
 IsPromptCompleted = function(name)
     if Config.Prompts[name] then
         return Citizen.InvokeNative(0xE0F65F0640EF0617, Config.Prompts[name])
-    end return
+    end
+    return false
 end
 
 IsPromptEnabled = function(name)
     if Config.Prompts[name] then
         return PromptIsEnabled(Config.Prompts[name])
-    end return
+    end
+    return false
 end
 
 -- blips
@@ -460,15 +491,18 @@ AddEventHandler('onResourceStop', function(resource)
         LocalPlayer.state.isBathingActive = false
 
         for i=1, #Config.CreatedEntries do
-            if Config.CreatedEntries[i].type == "PED" then
-                if DoesEntityExist(Config.CreatedEntries[i].handle) then DeleteEntity(Config.CreatedEntries[i].handle) end
-            elseif Config.CreatedEntries[i].type == "BLIP" then
-                RemoveBlip(Config.CreatedEntries[i].handle)
-            elseif Config.CreatedEntries[i].type == "PROMPT" then
-                Citizen.InvokeNative(0x00EDE88D4D13CF59, Config.CreatedEntries[i].handle)
-            elseif Config.CreatedEntries[i].type == "CAM" then
-                if DoesCamExist(Config.CreatedEntries[i].handle) then RenderScriptCams(false, false, 0, false, false, false) DestroyCam(Config.CreatedEntries[i].handle) end
+            local entry = Config.CreatedEntries[i]
+            if entry.type == "PED" then
+                if DoesEntityExist(entry.handle) then DeleteEntity(entry.handle) end
+            elseif entry.type == "BLIP" then
+                RemoveBlip(entry.handle)
+            elseif entry.type == "PROMPT" then
+                Citizen.InvokeNative(0x00EDE88D4D13CF59, entry.handle)
+            elseif entry.type == "CAM" then
+                if DoesCamExist(entry.handle) then RenderScriptCams(false, false, 0, false, false, false) DestroyCam(entry.handle) end
             end
         end
+
+        Config.CreatedEntries = {}
     end
 end)
