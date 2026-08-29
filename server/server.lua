@@ -1,14 +1,27 @@
 local RSGCore = exports['rsg-core']:GetCoreObject()
 BathingSessions = {}
 
+local function IsPlayerNearBath(src, town, maxDistance)
+    local zone = Config.BathingZones[town]
+    if not zone then return false end
+
+    local ped = GetPlayerPed(src)
+    if not ped or ped == 0 then return false end
+
+    local playerCoords = GetEntityCoords(ped)
+    return #(playerCoords - zone.consumer) <= (maxDistance or 3.0)
+end
+
 RegisterServerEvent('rsg-bathing:server:canEnterBath')
 AddEventHandler('rsg-bathing:server:canEnterBath', function(town)
     local src = source
     if not Config.BathingZones[town] then return end
 
+    if not IsPlayerNearBath(src, town) then return end
+
     local Player = RSGCore.Functions.GetPlayer(src)
     if not Player then return end
-    local currentMoney = Player.PlayerData.money['cash']
+    local currentMoney = Player.PlayerData.money['cash'] or 0
 
     if not BathingSessions[town] then
         if currentMoney >= Config.NormalBathPrice then
@@ -32,7 +45,7 @@ AddEventHandler('rsg-bathing:server:canEnterDeluxeBath', function(town)
 
         local Player = RSGCore.Functions.GetPlayer(src)
         if not Player then return end
-        local currentMoney = Player.PlayerData.money['cash']
+        local currentMoney = Player.PlayerData.money['cash'] or 0
 
         if currentMoney >= Config.DeluxeBathPrice then
             Player.Functions.RemoveMoney('cash', Config.DeluxeBathPrice)

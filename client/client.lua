@@ -90,7 +90,7 @@ AddEventHandler('rsg-bathing:client:StartBath', function(town)
         currentCam = CreateCam("DEFAULT_SCRIPTED_CAMERA", 1)
         table.insert(Config.CreatedEntries, { type = "CAM", handle = currentCam })
 
-        N_0x69d65e89ffd72313(true, true)
+        RequestLetterBoxNow(true, true)
         SetCamCoord(currentCam, GetFinalRenderedCamCoord(), 0.0, 0.4, 0.5)
         SetCamRot(currentCam, GetFinalRenderedCamRot(1), 1)
         SetCamFov(currentCam, GetFinalRenderedCamFov())
@@ -120,8 +120,7 @@ AddEventHandler('rsg-bathing:client:StartBath', function(town)
 
                 while IsControlPressed(0, `INPUT_CONTEXT_X`) do
                     if IsPromptCompleted("SCRUB") then
-                        ClearPedEnvDirt(cache.ped)
-                        ClearPedBloodDamage(cache.ped)
+                        FullyCleanPed(cache.ped)
                         if DoesEntityExist(BathingPed) and not Config.BathingModes[bathMode].deluxe then
                             bathMode = bathMode + 1
                         end
@@ -147,11 +146,7 @@ AddEventHandler('rsg-bathing:client:StartBath', function(town)
 
                                 TogglePrompts({ "REQUEST_DELUXE_BATHING", "SCRUB" }, false)
 
-                                ClearPedEnvDirt(cache.ped)
-                                ClearPedBloodDamage(cache.ped)
-                                N_0xe3144b932dfdff65(cache.ped, 0.0, -1, 1, 1)
-                                ClearPedDamageDecalByZone(cache.ped, 10, "ALL")
-                                Citizen.InvokeNative(0x7F5D88333EE8A86F, cache.ped, 1)
+                                FullyCleanPed(cache.ped)
 
                                 bathMode = #Config.BathingModes+1
                                 if DoesEntityExist(BathingPed) then
@@ -231,9 +226,10 @@ ExitBathing = function()
         Citizen.InvokeNative(0x84EEDB2C6E650000, outroScene)
     end
 
+    FullyCleanPed(cache.ped)
     DressCharacter()
     UnloadAllStreamings()
-    N_0x69d65e89ffd72313(false, false)
+    RequestLetterBoxNow(false, false)
     TriggerMusicEvent("MG_BATHING_STOP")
     Citizen.InvokeNative(0x704C908E9C405136, cache.ped)
     TriggerServerEvent("RSGCore:Server:SetMetaData", "cleanliness", 100)
@@ -392,6 +388,17 @@ SetCurrentCleaniest = function(rag, value)
         SetTaskMoveNetworkSignalFloat(BathingPed, "Cleanliness_Right_Leg", value);
         SetTaskMoveNetworkSignalFloat(BathingPed, "Cleanliness_Head", value);
     end
+end
+
+-- Fully resets environmental dirt, blood damage and damage decals on a ped.
+-- Centralised so every "bath finished" path (full scrub, or leaving early) guarantees a clean ped.
+FullyCleanPed = function(ped)
+    if not DoesEntityExist(ped) then return end
+    ClearPedEnvDirt(ped)
+    ClearPedBloodDamage(ped)
+    SetPedDirtCleaned(ped, 0.0, -1, 1, 1)
+    ClearPedDamageDecalByZone(ped, 10, "ALL")
+    Citizen.InvokeNative(0x7F5D88333EE8A86F, ped, 1)
 end
 
 Action = function(name)
