@@ -1,9 +1,28 @@
-lib.locale()
-
 Config = {}
 
-Config.NormalBathPrice = 1
-Config.DeluxeBathPrice = 5
+Config.NormalBathPrice = 1      -- cash, standard bath
+Config.DeluxeBathPrice = 5      -- cash, assisted (deluxe) bath
+Config.InteractDistance = 1.0   -- client: how close to the tub to see the prompt
+Config.ServerMaxDistance = 3.0  -- server: max distance allowed when paying
+Config.ShowBlips = true
+
+-- Effects taken from the RDR2 bathing script (ptfx asset scr_mg_bathing)
+Config.Effects = {
+    steam = true,   -- steam rising from the tub
+    foam = true,    -- soap foam on each body part as you scrub it
+}
+
+-- Attendant / player voice lines during the bath
+Config.Speech = {
+    enabled = true,
+    chatInterval = 20000, -- ms between attendant small talk lines while scrubbing
+}
+
+-- Health / stamina cores when leaving the bath
+Config.Rewards = {
+    regular = { refillCores = true, fortify = 0.0, clearStress = true },
+    deluxe  = { refillCores = true, fortify = 100.0, clearStress = true }, -- fortify = overpower amount (0 = off)
+}
 
 Config.BathingZones = {
     ["SaintDenis"] = {
@@ -12,6 +31,7 @@ Config.BathingZones = {
         consumer = vector3(2632.6, -1223.79, 59.59),
         lady = `CS_BATHINGLADIES_01`,
         guy = `CS_LeviSimon`,
+        maidVoice = "1103_A_F_M_BathingLadies_01_WHITE_03",
         door = 779421929
     },
     ["Valentine"] = {
@@ -20,6 +40,7 @@ Config.BathingZones = {
         consumer = vector3(-320.56, 762.41, 117.44),
         lady = `CS_BATHINGLADIES_01`,
         guy = `CS_LeviSimon`,
+        maidVoice = "1102_A_F_M_BathingLadies_01_WHITE_02",
         door = 142240370
     },
     ["Annesburg"] = {
@@ -28,6 +49,7 @@ Config.BathingZones = {
         consumer = vector3(2950.42, 1332.15, 44.44),
         lady = `CS_BATHINGLADIES_01`,
         guy = `CS_LeviSimon`,
+        maidVoice = "1101_A_F_M_BathingLadies_01_WHITE_01",
         door = -201071322
     },
     ["Strawberry"] = {
@@ -36,6 +58,7 @@ Config.BathingZones = {
         consumer = vector3(-1816.45, -372.44, 166.50),
         lady = `CS_BATHINGLADIES_01`,
         guy = `CS_LeviSimon`,
+        maidVoice = "1101_A_F_M_BathingLadies_01_WHITE_01",
         door = 1256786197
     },
     ["Blackwater"] = {
@@ -44,6 +67,7 @@ Config.BathingZones = {
         consumer = vector3(-822.82, -1315.72, 43.58),
         lady = `CS_BATHINGLADIES_01`,
         guy = `CS_LeviSimon`,
+        maidVoice = "1101_A_F_M_BathingLadies_01_WHITE_01",
         door = 1523300673
     },
     ["Vanhorn"] = {
@@ -52,6 +76,7 @@ Config.BathingZones = {
         consumer = vector3(2986.31, 568.27, 47.85),
         lady = `CS_BATHINGLADIES_01`,
         guy = `CS_LeviSimon`,
+        maidVoice = "1104_U_F_M_VhtBathgirl_01",
         door = 1102743282
     },
     ["Rhodes"] = {
@@ -60,15 +85,19 @@ Config.BathingZones = {
         consumer = vector3(1340.11, -1379.6, 84.28),
         lady = `CS_BATHINGLADIES_01`,
         guy = `CS_LeviSimon`,
+        maidVoice = "1103_A_F_M_BathingLadies_01_WHITE_03",
         door = -1847993131
     },
-    --[[["Tumbleweed"] = {
+    ["Tumbleweed"] = {
         dict = "script@mini_game@bathing@BATHING_INTRO_OUTRO_TUMBLEWEED",
+        outro = "Pbl_Regular_Outro", -- Tumbleweed uses its own outro (bathing.c, town 115)
         rag = vector4(-5513.76, -2972.3, -1.78, 15.0),
         consumer = vector3(-5517.83, -2973.23, -0.78),
         lady = `CS_BATHINGLADIES_01`,
+        guy = `CS_LeviSimon`,
+        maidVoice = "1102_A_F_M_BathingLadies_01_WHITE_02",
         door = 1682160693
-    }]]
+    }
 }
 
 Config.BathingModes = {
@@ -98,13 +127,9 @@ Config.BathingModes = {
     }
 }
 
-Config.DressElements = {}
-
 Config.Prompts = {
     { label = locale('prompt_bath', Config.NormalBathPrice), id = "START_BATHING" },
     { label = locale('prompt_scrub'), id = "SCRUB", control = `INPUT_CONTEXT_X`, time = 2000 },
     { label = locale('prompt_luxury_bath', Config.DeluxeBathPrice), id = "REQUEST_DELUXE_BATHING" },
     { label = locale('prompt_leave'), id = "STOP_BATHING", control = `INPUT_INTERACT_NEG` }
 }
-
-Config.CreatedEntries = {}

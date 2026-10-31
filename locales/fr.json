@@ -1,8 +1,10 @@
 {
-    "prompt_bath": "Prendre un bain (%s$)",
-    "prompt_luxury_bath": "Service de luxe (%s$)",
+    "notify_title": "Bains publics",
+    "prompt_bath": "Prendre un bain ($%s)",
+    "prompt_luxury_bath": "Service de luxe ($%s)",
     "prompt_scrub": "Frotter",
     "prompt_leave": "Sortir du bain",
-    "notify_not_enough_money": "Tu n’as pas assez d’argent !",
-    "notify_occupied": "Cette salle est déjà occupée !"
+    "notify_not_enough_money": "Tu n'as pas assez d'argent !",
+    "notify_occupied": "Cette salle est déjà occupée !",
+    "blip_name": "Bains publics"
 }

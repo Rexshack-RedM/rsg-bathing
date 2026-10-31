@@ -1,8 +1,10 @@
 {
-    "prompt_bath": "Usar a Banheira (%s$)",
-    "prompt_luxury_bath": "Serviço de Luxo (%s$)",
-    "prompt_scrub": "Esfoliar",
+    "notify_title": "Casa de Banho",
+    "prompt_bath": "Usar a Banheira ($%s)",
+    "prompt_luxury_bath": "Serviço de Luxo ($%s)",
+    "prompt_scrub": "Esfregar",
     "prompt_leave": "Sair",
     "notify_not_enough_money": "Você não tem dinheiro suficiente!",
-    "notify_occupied": "Este quarto está ocupado no momento!"
+    "notify_occupied": "Este quarto está ocupado no momento!",
+    "blip_name": "Casa de Banho"
 }

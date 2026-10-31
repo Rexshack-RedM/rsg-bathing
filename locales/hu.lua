@@ -1,8 +1,0 @@
-return {
-    prompt_bath = "Fürdés használata (%s$)",
-    prompt_luxury_bath = "Luxus szolgáltatás (%s$)",
-    prompt_scrub = "Súrolás",
-    prompt_leave = "Kilépés",
-    notify_not_enough_money = "Nincs elég pénzed!",
-    notify_occupied = "Ez a szoba jelenleg foglalt!"
-}

@@ -1,8 +1,10 @@
 {
-    "prompt_bath": "Wejdź do kąpieli (%s$)",
-    "prompt_luxury_bath": "Luksusowa usługa (%s$)",
-    "prompt_scrub": "Pocieraj",
+    "notify_title": "Łaźnia",
+    "prompt_bath": "Wejdź do kąpieli ($%s)",
+    "prompt_luxury_bath": "Luksusowa usługa ($%s)",
+    "prompt_scrub": "Szoruj",
     "prompt_leave": "Wyjdź",
     "notify_not_enough_money": "Nie masz wystarczająco pieniędzy!",
-    "notify_occupied": "Ten pokój jest aktualnie zajęty!"
+    "notify_occupied": "Ten pokój jest aktualnie zajęty!",
+    "blip_name": "Łaźnia"
 }
