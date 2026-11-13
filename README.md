@@ -71,4 +71,4 @@ exports['rsg-bathing']:IsBathingActive()   -- deprecated, kept for compatibility
 
 GPL-3.0
 
-Support: https://buymeacoffee.com/rexshack
+Support the Project : https://rexshack.tebex.store/

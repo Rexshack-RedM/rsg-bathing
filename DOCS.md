@@ -72,4 +72,4 @@ Payments are server-authorised (the `RemoveMoney` result is checked) with per-pl
 | No steam/foam | Check `Effects` |
 | Bath refused | Not enough cash, or too far from the tub |
 
-Support: https://buymeacoffee.com/rexshack
+Support the Project : https://rexshack.tebex.store/
