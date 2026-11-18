@@ -73,3 +73,72 @@ Payments are server-authorised (the `RemoveMoney` result is checked) with per-pl
 | Bath refused | Not enough cash, or too far from the tub |
 
 Support the Project : https://rexshack.tebex.store/
+
+<!-- BEGIN AUTO-REFERENCE (generated from the code; re-run the generator instead of editing by hand) -->
+
+## Technical reference
+
+Generated from the source of **rsg-bathing 3.0.0**. Names, arguments and defaults below are read straight from the code.
+
+### Dependencies
+
+`rsg-core`, `rsg-wardrobe`
+
+### Configuration
+
+| Option | Default | Notes |
+|---|---|---|
+| `Config.NormalBathPrice` | `1` | cash, standard bath |
+| `Config.DeluxeBathPrice` | `5` | cash, assisted (deluxe) bath |
+| `Config.InteractDistance` | `1.0` | client: how close to the tub to see the prompt |
+| `Config.ServerMaxDistance` | `3.0` | server: max distance allowed when paying |
+| `Config.ShowBlips` | `true` |  |
+| `Config.Effects` | `table` | Effects taken from the RDR2 bathing script (ptfx asset scr_mg_bathing) |
+| `Config.Speech` | `table` | Attendant / player voice lines during the bath |
+| `Config.Rewards` | `table` | Health / stamina cores when leaving the bath |
+| `Config.BathingZones` | `table` |  |
+| `Config.BathingModes` | `table` |  |
+| `Config.Prompts` | `table` |  |
+
+### Exports
+
+**Client**
+
+| Export | Arguments | File |
+|---|---|---|
+| `IsBathingActive` | `` | `client/client.lua` |
+
+```lua
+-- example
+local result = exports['rsg-bathing']:IsBathingActive()
+```
+
+### Events
+
+Server events can be fired by any client, so every handler re-validates the player, the arguments and any permission, distance or cooldown on the server. Never add a reward to a handler without those checks.
+
+| Event | Side | Arguments | File |
+|---|---|---|---|
+| `rsg-bathing:client:ToggleInvincibility` | client | `state` | `client/client.lua` |
+| `rsg-bathing:client:StartDeluxeBath` | client | `town` | `client/client.lua` |
+| `rsg-bathing:client:RestorePrompts` | client | `` | `client/client.lua` |
+| `rsg-bathing:client:HideDeluxePrompt` | client | `` | `client/client.lua` |
+| `rsg-bathing:client:StartBath` | client | `town` | `client/client.lua` |
+| `rsg-bathing:server:canEnterBath` | server | `town` | `server/server.lua` |
+| `rsg-bathing:server:canEnterDeluxeBath` | server | `` | `server/server.lua` |
+| `rsg-bathing:server:setBathAsFree` | server | `` | `server/server.lua` |
+| `rsg-bathing:server:undressPlayer` | server | `` | `server/server.lua` |
+| `rsg-bathing:server:dressPlayer` | server | `` | `server/server.lua` |
+
+```lua
+-- from a client script
+TriggerServerEvent('rsg-bathing:server:canEnterBath', town)
+-- from a server script
+TriggerClientEvent('rsg-bathing:client:ToggleInvincibility', source, state)
+```
+
+### Locales
+
+Language files in `locales/`: `de`, `el`, `en`, `es`, `fr`, `ja`, `nl`, `pl`, `pt-br`, `ro`. Set the language with `setr rsg:locale "en"`.
+
+<!-- END AUTO-REFERENCE -->
