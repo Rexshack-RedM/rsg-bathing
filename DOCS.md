@@ -18,7 +18,7 @@
 | `client/structs.js` | Native struct helper |
 | `server/server.lua` | Payment, sessions, undress/redress, cleanliness |
 | `server/versionchecker.lua` | GitHub version check |
-| `locales/*.json` | en, de, el, es, fr, ja, nl, pl, pt-br, ro |
+| `locales/*.json` | en, de, el, es, fr, ja, nl, pl, pt-br, ro, ru |
 
 ## 2. How it works
 - Bathhouses: Saint Denis, Valentine, Annesburg, Strawberry, Blackwater, Van Horn, Rhodes and Tumbleweed (own `Pbl_Regular_Outro`).
@@ -139,6 +139,6 @@ TriggerClientEvent('rsg-bathing:client:ToggleInvincibility', source, state)
 
 ### Locales
 
-Language files in `locales/`: `de`, `el`, `en`, `es`, `fr`, `ja`, `nl`, `pl`, `pt-br`, `ro`. Set the language with `setr rsg:locale "en"`.
+Language files in `locales/`: `de`, `el`, `en`, `es`, `fr`, `ja`, `nl`, `pl`, `pt-br`, `ro`, `ru`. Set the language with `setr rsg:locale "en"`.
 
 <!-- END AUTO-REFERENCE -->

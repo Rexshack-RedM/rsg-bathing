@@ -1,0 +1,10 @@
+{
+    "notify_title": "Купальня",
+    "prompt_bath": "Принять ванну ($%s)",
+    "prompt_luxury_bath": "Люксовое обслуживание ($%s)",
+    "prompt_scrub": "Потереть",
+    "prompt_leave": "Выйти",
+    "notify_not_enough_money": "У вас недостаточно денег!",
+    "notify_occupied": "Эта комната сейчас занята!",
+    "blip_name": "Купальня"
+}

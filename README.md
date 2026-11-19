@@ -18,7 +18,7 @@ Interactive bathhouse system for RedM servers running the RSG Framework. Players
 - Invincible while bathing
 - Map blips (toggleable) and distance-gated proximity loop
 - Full cleanup of props, peds, cameras, anim scenes, prompts and blips on resource stop
-- Locales: en, de, el, es, fr, ja, nl, pl, pt-br, ro
+- Locales: en, de, el, es, fr, ja, nl, pl, pt-br, ro, ru
 
 ## Dependencies
 
